@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Harry Beaumont — Automations Engineer Application | ElevenLabs</title>
+<meta name="description" content="Portfolio and application materials for Harry Beaumont's Automations Engineer application at ElevenLabs. Technical startup cofounder who built a complete internal tools stack — 5 agents, 112K+ lines of code, 20+ API integrations — to run a business solo." />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { min-height: 100vh; background: #FAFAF8; font-family: 'Georgia', 'Times New Roman', serif; color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+  nav::-webkit-scrollbar { display: none; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ─── Data ───────────────────────────────────────────────────────────────────
+
+const STATS = [
+  { label: "Internal Tools in Production", value: 5, suffix: "" },
+  { label: "Lines of Code", value: 112, suffix: "K+" },
+  { label: "API Integrations", value: 20, suffix: "+" },
+  { label: "Years Building Businesses", value: 7, suffix: "+" },
+];
+
+const NAV_SECTIONS = [
+  { id: "rolematch", label: "Role Match" },
+  { id: "tools", label: "Internal Tools" },
+  { id: "architecture", label: "Architecture" },
+  { id: "gtm", label: "GTM Automation" },
+  { id: "ops", label: "Ops Automation" },
+  { id: "finance", label: "Finance Automation" },
+  { id: "voice", label: "Voice Agent" },
+  { id: "aipractice", label: "AI Practice" },
+  { id: "why", label: "Why ElevenLabs" },
+];
+
+const INTEGRATIONS = [
+  { name: "Claude API", category: "ai" },
+  { name: "ElevenLabs", category: "ai" },
+  { name: "OpenAI", category: "ai" },
+  { name: "Hostaway", category: "platform" },
+  { name: "Airbnb", category: "platform" },
+  { name: "Booking.com", category: "platform" },
+  { name: "Stripe", category: "payments" },
+  { name: "Telleroo", category: "payments" },
+  { name: "Tide", category: "payments" },
+  { name: "Signable", category: "ops" },
+  { name: "Cloudinary", category: "ops" },
+  { name: "Twilio", category: "comms" },
+  { name: "WhatsApp", category: "comms" },
+  { name: "Slack API", category: "comms" },
+  { name: "Google Sheets", category: "ops" },
+  { name: "Cloudflare Workers", category: "infra" },
+  { name: "Vercel", category: "infra" },
+  { name: "Replit", category: "infra" },
+  { name: "GitHub", category: "infra" },
+  { name: "Tailscale", category: "infra" },
+];
+
+const INTEGRATION_COLORS = {
+  ai: { bg: "#f0e8ff", color: "#6b3fa0" },
+  platform: { bg: "#e8f4f0", color: "#2d6a4f" },
+  payments: { bg: "#fff3e0", color: "#a0622d" },
+  ops: { bg: "#e8f0f8", color: "#3a5a8c" },
+  comms: { bg: "#fce8ee", color: "#8c3a5a" },
+  infra: { bg: "#f0f0f0", color: "#555555" },
+};
+
+const TIMELINE = [
+  { year: "2013–2017", title: "BSc Real Estate (Hons) — Nottingham Trent University", detail: "RICS-accredited degree. Placement year at Salloway Property Consultants covering valuations, agency, and development appraisals across the East Midlands.", type: "education" },
+  { year: "2017–2018", title: "MSc International Real Estate Investment & Finance (Incomplete) — NTU", detail: "Began advanced studies in real estate finance and investment analysis before leaving to pursue building Comfort Short Stays full-time.", type: "education" },
+  { year: "2017–2019", title: "Founded HBS Apartments / Comfort Short Stays", detail: "Started with 15 units. Built it to 150+ properties at peak, hitting £450k revenue in a single month. Hands-on across operations, client acquisition, pricing, and team management.", type: "founded" },
+  { year: "2019–2020", title: "Co-founded Urbanosa Ltd", detail: "Linen hire and laundry logistics business servicing 70+ short-stay apartments. Built the operational playbook for turnaround logistics at scale.", type: "founded" },
+  { year: "2020–Present", title: "Founded Wrenstone Stays Ltd / Key Stays", detail: "Rebuilt from the ground up. Currently managing 68 properties across Nottingham, Leicester, and Derby via Airbnb & Booking.com. Built the entire internal tools stack from scratch.", type: "founded" },
+  { year: "2023–Present", title: "Deep API Integration & AI Systems Build", detail: "Invested heavily in Claude API, ElevenLabs, and custom automations. Scaled from manual ops to fully autonomous internal tools stack. 112K+ lines of code across 5 production agents.", type: "founded" },
+  { year: "2024–Present", title: "Founded Midlands Digital AI", detail: "AI automation consultancy helping East Midlands SMEs implement practical AI solutions. Packaging the internal tools stack approach for other businesses.", type: "founded" },
+];
+
+const AGENTS = [
+  { title: "Communications Agent (v3.1)", size: "31 scripts · 2.7MB", summary: "22-intent classification. 127 messages/day, 69 auto-sent. Response time from 25+ mins to under 2.", detail: "The critical path for guest operations. 22-intent classification system that routes every guest message through a deterministic playbook. Claude API auto-drafts responses for routine queries. System auto-sends routine responses, queues anything involving deposits/refunds/complaints for human review. Includes guest intelligence (mood tracking, satisfaction scoring, review risk prediction), deposit collection with Stripe and automated chase sequences, proactive upsell triggers (early check-in, late checkout, extensions, mid-stay cleans), grocery ordering via Deliveroo, and a self-learning feedback loop that tracks which drafted responses get edited before sending — continuously improving accuracy.", tags: ["Claude API", "22 Intents", "Self-Learning", "Stripe", "Hostaway API"] },
+  { title: "Finance Agent (v3.0)", size: "115K chars", summary: "7-domain financial automation. Deposits to VAT. Revenue leakage detection.", detail: "Complete financial controller across guest finances (deposits, damage charges, invoicing), owner finances (statements, 12.5% commission + VAT payouts), contractor payments via Telleroo, platform reconciliation (Airbnb/Booking.com/Stripe with different payment timing), bank reconciliation with Tide statement import, cash flow forecasting (30/60/90 days), and VAT compliance. Includes revenue leakage detection (identifying missing payments from properties), duplicate payment prevention, and automated discrepancy investigation. Runs daily financial reports with zero human intervention.", tags: ["Telleroo API", "Stripe", "Tide", "7 Domains", "Revenue Tracking"] },
+  { title: "Onboarding Agent (v1.0)", size: "19 scripts · 2MB", summary: "11-stage property pipeline. E-signatures, image management, compliance.", detail: "Orchestrates the entire property onboarding journey from initial enquiry through to live listing. 11-stage pipeline with automatic progression gates. Manages contractor dispatch (photographers, cleaners, plumbers, electricians), Signable e-signature integration for contracts, Cloudinary image management, gas safety & EICR compliance tracking, stuck property alerts, and a 459K-character Operations Master file coordinating the entire flow. Properties move from Stage 0 (enquiry) to Stage 10 (live) with zero manual progression.", tags: ["11-Stage Pipeline", "Signable API", "Cloudinary", "Compliance Tracking"] },
+  { title: "Maintenance Agent (v2.2)", size: "16 scripts", summary: "Auto-triage by category. Cascading contractor alerts. Self-improving.", detail: "Automatic issue detection and categorization (plumbing, electrical, appliances, locksmith, heating, etc.), contractor dispatch with cascading WhatsApp alerts (primary contractor → backup team → escalation protocol), chase sequences for unresponsive contractors, completion tracking with photo verification, and a learning system that improves triage accuracy over time by analyzing resolution patterns. WhatsApp integration provides real-time updates to contractors and property managers.", tags: ["WhatsApp API", "Auto-Triage", "Contractor Dispatch", "Learning" ] },
+  { title: "Voice Agent (Production)", size: "8 scripts", summary: "ElevenLabs Conversational AI + Cloudflare Worker. 32 languages. Security-hardened.", detail: "Backend infrastructure for ElevenLabs voice agents handling real guest phone calls 24/7 across 68 properties. Built on Cloudflare Workers with real-time context injection — reservation details, listing information, local knowledge, and access codes served to the voice agent. Includes hard security controls preventing access code leakage to unpaid guests. 32-language support covering international guest base. Tested against 4 social engineering vectors (password reset, fake cancellations, impersonation, emergency pretexts). Running in production with 99.8% uptime.", tags: ["ElevenLabs", "Cloudflare Workers", "32 Languages", "Security Controls"], defaultOpen: true },
+];
+
+const TOOLS = [
+  { title: "Ops Dashboard", url: "https://ops.keystays.uk", description: "Next.js operations command centre (221 commits, 216 deployments). Real-time visibility across 8 operational queues: draft responses, escalations, complaints, unpaid deposits, fulfillment orders, pending extensions, cleanliness issues, maintenance requests. Every action syncs back to Google Sheets as the source of truth. Agent health monitoring dashboard showing each automation's status, error rates, and throughput.", tags: ["Next.js", "221 Commits", "8 Queues", "Real-Time Monitoring"], activity: "221 commits · Deployed today" },
+  { title: "Dynamic Pricing Engine", url: "https://pricing.keystays.co.uk", description: "Flask-based pricing system managing rates across 68 live properties via Hostaway API. Real-time financials, local event-based pricing boosts, competitor rate monitoring, per-property overrides, automated daily rate pushes at 6am. ML-assisted pricing optimization based on historical occupancy and revenue.", tags: ["Python/Flask", "Hostaway API", "Revenue Management", "Replit", "Daily Automation"] },
+  { title: "Property Reports Engine", description: "Revenue projection and property performance reports generated automatically for the landlord sales pipeline. Data sourced from live Airbnb, Booking.com, and Stripe data. Used to close property owner onboarding conversations with proof of earnings.", tags: ["Revenue Projection", "Sales Enablement", "Live Data"] },
+  { title: "Custom Platform & Infrastructure", description: "Bespoke internal platform with 600+ API endpoints orchestrating the entire operational lifecycle. Cloudflare Workers handling edge logic and rate limiting. Headless Mac Mini M4 with Tailscale running daily scraping, report generation, and automation tasks. Automated owner statement generation with detailed revenue breakdowns, fee reconciliation, and maintenance deductions.", tags: ["600+ Endpoints", "Cloudflare Workers", "Mac Mini M4", "Tailscale", "Daily Batch Jobs"] },
+];
+
+const TOOLS_EXTENDED = [
+  { title: "Termflow", description: "SaaS platform for PBSA (Purpose-Built Student Accommodation) management. End-to-end tenancy lifecycle tooling — from onboarding through to checkout and deposit handling. Soft-launched with 3 properties.", tags: ["SaaS", "PBSA", "Tenancy Lifecycle"] },
+  { title: "FixFlow", description: "Maintenance management application for student accommodation. Manages all maintenance issues from initial report through to resolution — with full tracking, assignment workflows, and contractor performance analytics.", tags: ["Maintenance Ops", "Performance Analytics", "Contractor Tracking"] },
+];
+
+const ROLEFIT = [
+  { title: "Technical cofounder mindset", detail: "I've built 5 production agents and a custom platform from nothing because buying software wasn't solving the problem. That's the mindset of someone who creates internal tools — identify pain, design the solution, build it, iterate based on real usage." },
+  { title: "I own the full stack", detail: "From API design through to deployment and monitoring. Not just writing scripts — understanding rate limits, error handling, security, logging, and operational resilience. Every tool runs 24/7 with real consequences if it fails." },
+  { title: "Production experience, not demos", detail: "These systems handle real business operations every day. Communications Agent processes 127 guest messages daily. Finance Agent reconciles across 4 payment platforms. Voice Agent takes live calls. I've debugged issues at 3am because guests couldn't check in." },
+  { title: "I understand operational constraints", detail: "Having run the business side, I know what internal teams actually need. Not feature-driven but outcome-driven. GTM teams need faster customer onboarding. Finance needs automated reconciliation. Ops needs visibility. I build what matters." },
+  { title: "API integration expertise", detail: "20+ integrations across AI, payments, comms, and infrastructure. I've built Telleroo payment flows, Slack notification systems, Cloudinary image pipelines, and Cloudflare Worker edge functions. I know how to make APIs work reliably at scale." },
+];
+
+// ─── Hooks & Components ─────────────────────────────────────────────────────
+
+function useCounter(target, duration = 2000, start = false) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime = null;
+    const step = (ts) => {
+      if (!startTime) startTime = ts;
+      const p = Math.min((ts - startTime) / duration, 1);
+      setCount(Math.floor(p * target));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration, start]);
+  return count;
+}
+
+function Reveal({ children, delay = 0 }) {
+  const ref = useRef(null);
+  const [v, setV] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); obs.disconnect(); } }, { threshold: 0.1 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return <div ref={ref} style={{ opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(20px)", transition: `all 0.6s ease ${delay}s` }}>{children}</div>;
+}
+
+function StatCard({ stat, index, inView }) {
+  const count = useCounter(stat.value, 1800, inView);
+  return (
+    <div style={{ textAlign: "center", padding: "20px 12px", opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(15px)", transition: `all 0.5s ease ${0.1 * index}s` }}>
+      <div style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 300, color: "#1a1a1a", letterSpacing: "-1px", fontFamily: "'Georgia', serif" }}>
+        {stat.prefix || ""}{count}{stat.suffix || ""}
+      </div>
+      <div style={{ fontSize: 12, fontFamily: "system-ui, sans-serif", textTransform: "uppercase", letterSpacing: "1.5px", color: "#9b9389", marginTop: 6 }}>
+        {stat.label}
+      </div>
+    </div>
+  );
+}
+
+function ExpandableCard({ item, defaultOpen = false }) {
+  const [expanded, setExpanded] = useState(defaultOpen);
+  const isClickable = !!item.url;
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: "24px 28px",
+        background: hovered ? "#FFFFFF" : "#FEFDFB",
+        border: `1px solid ${hovered ? "#d4c9b8" : "#ece9e3"}`,
+        borderRadius: 8,
+        transition: "all 0.25s ease",
+        boxShadow: hovered ? "0 2px 12px rgba(0,0,0,0.04)" : "none",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: expanded ? 10 : 0 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: item.summary ? 6 : 0, flexWrap: "wrap" }}>
+            <h3 style={{ fontSize: "clamp(16px, 2vw, 19px)", fontWeight: 400, margin: 0, color: "#1a1a1a" }}>
+              {item.title}
+            </h3>
+            {item.size && <span style={{ fontSize: 11, fontFamily: "system-ui, sans-serif", padding: "2px 8px", background: "#f3f0eb", color: "#8b7355", borderRadius: 3 }}>{item.size}</span>}
+          </div>
+          {item.summary && !expanded && (
+            <p style={{ fontSize: "clamp(13px, 1.8vw, 14px)", color: "#8a8580", margin: 0, lineHeight: 1.5 }}>{item.summary}</p>
+          )}
+          {item.activity && (
+            <div style={{ fontSize: 11, fontFamily: "system-ui, sans-serif", color: "#2d6a4f", marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#2d6a4f", display: "inline-block" }} />
+              {item.activity}
+            </div>
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0, marginTop: 4 }}>
+          {isClickable && (
+            <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontFamily: "system-ui, sans-serif", color: "#8b7355", textDecoration: "none", opacity: hovered ? 1 : 0.5, transition: "opacity 0.2s" }} onClick={(e) => e.stopPropagation()}>
+              Visit ↗
+            </a>
+          )}
+          {(item.detail || item.description) && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              style={{ background: "none", border: "1px solid #e0ddd8", borderRadius: 4, padding: "3px 10px", cursor: "pointer", fontSize: 11, fontFamily: "system-ui, sans-serif", color: "#8b7355", transition: "all 0.2s" }}
+            >
+              {expanded ? "Less" : "More"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {expanded && (
+        <div style={{ overflow: "hidden" }}>
+          <p style={{ fontSize: "clamp(13px, 1.8vw, 15px)", lineHeight: 1.65, color: "#5a5550", margin: "8px 0 14px" }}>
+            {item.detail || item.description}
+          </p>
+          {item.tags && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {item.tags.map((tag, i) => (
+                <span key={i} style={{ fontSize: 11, fontFamily: "system-ui, sans-serif", padding: "3px 10px", background: "#f3f0eb", color: "#7a7269", borderRadius: 4, letterSpacing: "0.3px" }}>{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SectionHeading({ id, children }) {
+  return (
+    <h2 id={id} style={{ fontSize: 13, fontFamily: "system-ui, sans-serif", textTransform: "uppercase", letterSpacing: "2.5px", color: "#9b9389", fontWeight: 500, margin: "0 0 24px", paddingBottom: 12, borderBottom: "1px solid #e8e5e0", scrollMarginTop: 60 }}>
+      {children}
+    </h2>
+  );
+}
+
+// ─── Architecture Diagram ───────────────────────────────────────────────────
+
+function ArchitectureDiagram() {
+  const agents = [
+    { label: "Comms\nAgent", x: 60, y: 90, w: 80, h: 50, color: "#6b3fa0" },
+    { label: "Finance\nAgent", x: 170, y: 90, w: 80, h: 50, color: "#a0622d" },
+    { label: "Onboard\nAgent", x: 280, y: 90, w: 80, h: 50, color: "#2d6a4f" },
+    { label: "Maint.\nAgent", x: 390, y: 90, w: 80, h: 50, color: "#8c3a5a" },
+    { label: "Voice\nAgent", x: 500, y: 90, w: 80, h: 50, color: "#3a5a8c" },
+  ];
+
+  const externalTop = [
+    { label: "Claude API", x: 60, y: 10, color: "#6b3fa0" },
+    { label: "Hostaway", x: 170, y: 10, color: "#2d6a4f" },
+    { label: "Stripe", x: 280, y: 10, color: "#a0622d" },
+    { label: "ElevenLabs", x: 390, y: 10, color: "#3a5a8c" },
+    { label: "WhatsApp", x: 500, y: 10, color: "#8c3a5a" },
+  ];
+
+  const bottom = [
+    { label: "Ops Dashboard", x: 100, y: 195, color: "#555" },
+    { label: "Pricing Engine", x: 260, y: 195, color: "#555" },
+    { label: "Google Sheets\n(Source of Truth)", x: 420, y: 195, color: "#555" },
+  ];
+
+  return (
+    <div style={{ overflowX: "auto", padding: "0 0 8px" }}>
+      <svg viewBox="0 0 700 240" style={{ width: "100%", maxWidth: 700, minWidth: 500, height: "auto", display: "block", margin: "0 auto" }}>
+        {externalTop.map((ext, i) => (
+          <line key={`t${i}`} x1={ext.x + 40} y1={30} x2={agents[i].x + 40} y2={agents[i].y} stroke="#ddd8d0" strokeWidth={1} strokeDasharray="4,3" />
+        ))}
+
+        <line x1={100} y1={140} x2={140} y2={195} stroke="#ddd8d0" strokeWidth={1} strokeDasharray="4,3" />
+        <line x1={210} y1={140} x2={140} y2={195} stroke="#ddd8d0" strokeWidth={1} strokeDasharray="4,3" />
+        <line x1={320} y1={140} x2={300} y2={195} stroke="#ddd8d0" strokeWidth={1} strokeDasharray="4,3" />
+        <line x1={430} y1={140} x2={480} y2={195} stroke="#ddd8d0" strokeWidth={1} strokeDasharray="4,3" />
+        <line x1={540} y1={140} x2={480} y2={195} stroke="#ddd8d0" strokeWidth={1} strokeDasharray="4,3" />
+
+        <line x1={100} y1={165} x2={540} y2={165} stroke="#b5ad9e" strokeWidth={1.5} />
+        {agents.map((a, i) => (
+          <circle key={`dot${i}`} cx={a.x + 40} cy={165} r={3} fill="#b5ad9e" />
+        ))}
+
+        {externalTop.map((ext, i) => (
+          <g key={`ext${i}`}>
+            <rect x={ext.x} y={ext.y} width={80} height={24} rx={4} fill="none" stroke={ext.color} strokeWidth={1} opacity={0.5} />
+            <text x={ext.x + 40} y={ext.y + 16} textAnchor="middle" fontSize={9} fontFamily="system-ui, sans-serif" fill={ext.color} fontWeight={500}>{ext.label}</text>
+          </g>
+        ))}
+
+        {agents.map((a, i) => (
+          <g key={`a${i}`}>
+            <rect x={a.x} y={a.y} width={a.w} height={a.h} rx={6} fill={a.color} opacity={0.1} stroke={a.color} strokeWidth={1.5} />
+            {a.label.split("\n").map((line, li) => (
+              <text key={li} x={a.x + a.w / 2} y={a.y + 22 + li * 14} textAnchor="middle" fontSize={10} fontFamily="system-ui, sans-serif" fill={a.color} fontWeight={600}>{line}</text>
+            ))}
+          </g>
+        ))}
+
+        {bottom.map((b, i) => (
+          <g key={`b${i}`}>
+            <rect x={b.x} y={b.y} width={b.label.includes("Google") ? 140 : 120} height={b.label.includes("Google") ? 36 : 28} rx={4} fill="#f3f0eb" stroke="#ddd8d0" strokeWidth={1} />
+            {b.label.split("\n").map((line, li) => (
+              <text key={li} x={b.x + (b.label.includes("Google") ? 70 : 60)} y={b.y + 16 + li * 13} textAnchor="middle" fontSize={9} fontFamily="system-ui, sans-serif" fill="#5a5550" fontWeight={500}>{line}</text>
+            ))}
+          </g>
+        ))}
+
+        <text x={320} y={172} textAnchor="middle" fontSize={8} fontFamily="system-ui, sans-serif" fill="#b5ad9e" letterSpacing={1}>INTER-AGENT BUS</text>
+      </svg>
+    </div>
+  );
+}
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+
+function Portfolio() {
+  const [loaded, setLoaded] = useState(false);
+  const [statsInView, setStatsInView] = useState(false);
+  const [activeNav, setActiveNav] = useState("");
+  const statsRef = useRef(null);
+
+  useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
+
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setStatsInView(true); obs.disconnect(); } }, { threshold: 0.3 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const els = NAV_SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) setActiveNav(e.target.id); });
+    }, { threshold: 0.2, rootMargin: "-60px 0px -60% 0px" });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const sf = "system-ui, -apple-system, sans-serif";
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#FAFAF8", fontFamily: "'Georgia', 'Times New Roman', serif", color: "#1a1a1a" }}>
+
+      {/* Sticky Nav */}
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 100,
+        background: "rgba(250,250,248,0.92)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+        borderBottom: "1px solid #e8e5e0",
+        padding: "0 24px",
+        opacity: loaded ? 1 : 0, transition: "opacity 0.4s ease 0.3s",
+      }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", gap: 0, overflowX: "auto", scrollbarWidth: "none" }}>
+          {NAV_SECTIONS.map(s => (
+            <button
+              key={s.id}
+              onClick={() => scrollTo(s.id)}
+              style={{
+                background: "none", border: "none", cursor: "pointer",
+                padding: "14px 14px 12px",
+                fontSize: 11, fontFamily: sf, letterSpacing: "1px", textTransform: "uppercase",
+                color: activeNav === s.id ? "#8b7355" : "#a09a92",
+                borderBottom: activeNav === s.id ? "2px solid #8b7355" : "2px solid transparent",
+                transition: "all 0.2s", whiteSpace: "nowrap",
+                fontWeight: activeNav === s.id ? 600 : 400,
+              }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Header */}
+      <div style={{
+        padding: "48px 0 40px", textAlign: "center",
+        opacity: loaded ? 1 : 0, transform: loaded ? "translateY(0)" : "translateY(-10px)", transition: "all 0.6s ease",
+      }}>
+        <h1 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 400, letterSpacing: "-0.5px", margin: "0 0 8px" }}>
+          Harry Beaumont
+        </h1>
+        <p style={{ fontSize: "clamp(14px, 2vw, 17px)", color: "#6b6560", margin: "0 0 4px", fontStyle: "italic", letterSpacing: "0.3px" }}>
+          Automations Engineer
+        </p>
+        <p style={{ fontSize: 13, fontFamily: sf, textTransform: "uppercase", letterSpacing: "2px", color: "#9b9389", fontWeight: 500, margin: "8px 0 20px" }}>
+          APPLICATION · AUTOMATIONS ENGINEER · ELEVENLABS
+        </p>
+        <div style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap", fontSize: 14, padding: "0 20px" }}>
+          <a href="https://keystays.co.uk" target="_blank" rel="noopener noreferrer" style={{ color: "#8b7355", textDecoration: "none", borderBottom: "1px solid #d4c9b8", paddingBottom: 2 }}>keystays.co.uk</a>
+          <a href="https://ops.keystays.uk" target="_blank" rel="noopener noreferrer" style={{ color: "#8b7355", textDecoration: "none", borderBottom: "1px solid #d4c9b8", paddingBottom: 2 }}>ops.keystays.uk</a>
+          <a href="https://midlandsdigital.ai" target="_blank" rel="noopener noreferrer" style={{ color: "#8b7355", textDecoration: "none", borderBottom: "1px solid #d4c9b8", paddingBottom: 2 }}>midlandsdigital.ai</a>
+          <span style={{ color: "#a09a92" }}>Nottingham, UK</span>
+        </div>
+      </div>
+
+      {/* Intro */}
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px", opacity: loaded ? 1 : 0, transition: "opacity 0.6s ease 0.2s" }}>
+        <p style={{ fontSize: "clamp(15px, 2vw, 17px)", lineHeight: 1.75, color: "#3d3832", margin: 0 }}>
+          I'm a technical startup cofounder who built a complete internal tools stack to run a business solo.
+          Instead of buying software, I built it: 5 production agents handling communications, finance, onboarding,
+          maintenance, and voice interactions. 112K+ lines of code across deterministic + generative hybrid systems.
+          20+ API integrations. An operations dashboard with 221 commits. A dynamic pricing engine. A custom platform
+          with 600+ endpoints. These aren't side projects — they run live operations daily across 68 properties with
+          real consequences if they fail.
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div ref={statsRef} style={{ maxWidth: 800, margin: "40px auto 0", padding: "0 24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 8, padding: "28px 0", borderTop: "1px solid #e8e5e0", borderBottom: "1px solid #e8e5e0" }}>
+          {STATS.map((s, i) => <StatCard key={i} stat={s} index={i} inView={statsInView} />)}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "48px 24px 0" }}>
+
+        {/* Role Match */}
+        <Reveal>
+          <SectionHeading id="rolematch">Why This Role Fits</SectionHeading>
+        </Reveal>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20, marginBottom: 56 }}>
+          {ROLEFIT.map((item, i) => (
+            <Reveal key={i} delay={i * 0.06}>
+              <div style={{ padding: "20px 24px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8 }}>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 500, color: "#1a1a1a", marginBottom: 6 }}>{item.title}</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>{item.detail}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Internal Tools */}
+        <Reveal>
+          <SectionHeading id="tools">Internal Tools I've Built</SectionHeading>
+        </Reveal>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 56 }}>
+          {TOOLS.map((t, i) => (
+            <Reveal key={i} delay={i * 0.06}>
+              <ExpandableCard item={t} />
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Extended Tools */}
+        <div style={{ marginBottom: 56 }}>
+          <div style={{ fontSize: 12, fontFamily: sf, textTransform: "uppercase", letterSpacing: "1.5px", color: "#b5ad9e", marginBottom: 12, fontWeight: 500 }}>Experimental & SaaS Products</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 10 }}>
+            {TOOLS_EXTENDED.map((t, i) => (
+              <Reveal key={i} delay={i * 0.06}>
+                <div style={{ padding: "18px 22px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8 }}>
+                  <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 400, color: "#1a1a1a", marginBottom: 6 }}>{t.title}</div>
+                  <p style={{ fontSize: 12, color: "#8a8580", lineHeight: 1.5, margin: "0 0 10px" }}>{t.description}</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {t.tags.map((tag, j) => (
+                      <span key={j} style={{ fontSize: 10, fontFamily: sf, padding: "2px 8px", background: "#f3f0eb", color: "#7a7269", borderRadius: 3 }}>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+
+        {/* Architecture */}
+        <Reveal>
+          <SectionHeading id="architecture">System Architecture</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ padding: "24px 16px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8, marginBottom: 56 }}>
+            <ArchitectureDiagram />
+            <p style={{ fontSize: 12, fontFamily: sf, color: "#9b9389", textAlign: "center", margin: "12px 0 0", fontStyle: "italic" }}>
+              5 autonomous agents communicating via inter-agent bus, connected to 20+ external APIs, with Google Sheets as the unified data layer
+            </p>
+          </div>
+        </Reveal>
+
+        {/* GTM Automation */}
+        <Reveal>
+          <SectionHeading id="gtm">GTM Automation: Communications Agent</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ padding: "28px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8, marginBottom: 56 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>Customer Lifecycle Automation</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>Reframing this as GTM automation for ElevenLabs: 22-intent classification system that routes every customer inquiry through a deterministic playbook. Claude API auto-drafts responses for standard queries (pricing, features, integrations). System auto-sends routine responses, queues complex queries or complaints for human review. Includes customer intelligence (engagement tracking, churn risk scoring), automated upsell triggers, and a self-learning system that improves over time by analyzing which drafted responses customers engage with most.</p>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>Current Metrics</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>127 messages/day processed. 69 auto-sent without human review. Average response time improved from 25+ minutes to under 2 minutes. Zero customer complaints about AI-generated responses — the learning system ensures accuracy.</p>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>What This Means for ElevenLabs GTM</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>I can accelerate customer inquiry response times. I understand the friction points in long sales cycles. I've built the automation infrastructure to handle volume without losing personalization. This is exactly what GTM teams need.</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Ops Automation */}
+        <Reveal>
+          <SectionHeading id="ops">Ops Automation: Maintenance & Onboarding Agents</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ padding: "28px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8, marginBottom: 56 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>Maintenance Operations Automation</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>Automatic issue detection and categorization, contractor dispatch with cascading WhatsApp alerts, chase sequences for unresponsive teams, and a learning system that improves triage accuracy. Issues are categorized (plumbing, electrical, appliances, locksmith, etc.) and routed to the right contractor automatically. When contractors don't respond, escalation happens without human intervention.</p>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>Onboarding Pipeline Automation</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>11-stage property onboarding pipeline from enquiry to live listing. Contractor dispatch, e-signatures (Signable API), image management (Cloudinary), compliance tracking (gas safety, EICR). Properties move automatically from stage to stage with zero manual progression gates.</p>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>Application to ElevenLabs Ops</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>Your ops teams need visibility and automation. I've built the infrastructure for auto-triage, contractor (or team) dispatch, compliance tracking, and escalation. I can apply this pattern to your customer support workflows, partner integrations, or internal operational processes.</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Finance Automation */}
+        <Reveal>
+          <SectionHeading id="finance">Finance Automation: The Finance Agent</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ padding: "28px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8, marginBottom: 56 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>7-Domain Financial Controller</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>Guest finances (deposits, damage charges, invoicing). Owner finances (payout statements, 12.5% commission + VAT). Contractor payments via Telleroo. Platform reconciliation (Airbnb/Booking.com/Stripe with different payment timing). Bank reconciliation with Tide. Cash flow forecasting (30/60/90 days). VAT compliance. Runs daily with zero human intervention.</p>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>Revenue Leakage Detection</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>Identifies missing payments from properties. Catches duplicate payments before they happen. Flags discrepancies for investigation. This is what every finance team needs but usually doesn't have.</p>
+              </div>
+              <div>
+                <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#1a1a1a", marginBottom: 4 }}>For ElevenLabs Finance Teams</div>
+                <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>I can automate payment reconciliation, revenue tracking, and compliance reporting. I've integrated with Stripe, bank APIs, and custom payment platforms. I understand the pain of multi-currency, multi-platform reconciliation.</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Voice Agent */}
+        <Reveal>
+          <SectionHeading id="voice">ElevenLabs Voice Agent in Production</SectionHeading>
+        </Reveal>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 56 }}>
+          <Reveal delay={0.06}>
+            <ExpandableCard item={AGENTS[4]} defaultOpen={true} />
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.1}>
+          <div style={{ padding: "28px", background: "#f0e8ff", border: "1px solid #d4c9b8", borderRadius: 8, marginBottom: 56 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 600, color: "#3d2563" }}>Why This Matters</div>
+              <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#3d2563", margin: 0 }}>I'm not applying to ElevenLabs as a customer. I'm applying as someone who's already built on your platform at scale. I've debugged rate limits. I've designed for security (preventing access code leaks to unpaid guests). I've handled edge cases (international guests, multiple languages, social engineering vectors). I know what works because I'm running it live every day.</p>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* AI Practice */}
+        <Reveal>
+          <SectionHeading id="aipractice">How I Build AI Systems</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ padding: "32px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8, marginBottom: 56 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {[
+                { title: "Production AI, not demos", detail: "These systems handle real business operations with real consequences. The Communications Agent processes 127 messages daily. The Finance Agent reconciles millions in payments. The Voice Agent takes live guest calls. I've debugged issues at 3am because something broke." },
+                { title: "Deterministic + Generative hybrid architecture", detail: "I don't let Claude handle everything end-to-end. Instead, I build a deterministic routing layer first (22-intent classification), then use Claude for response generation within guardrails. This gives you both reliability and flexibility." },
+                { title: "Self-learning infrastructure", detail: "My systems improve over time through explicit feedback loops. The Communications Agent tracks which drafted responses get edited before sending, analyzes the patterns, and updates system prompts. The Maintenance Agent improves triage accuracy by learning from resolution patterns." },
+                { title: "Context management matters more than prompt cleverness", detail: "The hardest engineering problem isn't writing good prompts — it's getting the right context to LLM APIs at the right time. Reservation details, guest history, property quirks, previous messages. The quality of your context determines the quality of your output." },
+                { title: "Built for adoption, not just functionality", detail: "Explainability and trust matter. My dashboard shows exactly why an agent made a decision. Humans can override decisions. Every auto-sent response can be traced back to the intent classification and Claude API call. This is what makes people trust AI systems." },
+                { title: "AI consultancy for other businesses", detail: "I've started packaging this approach for SMEs. They don't need vaporware — they need production systems they can actually run. I help them identify where AI saves hours vs. where it adds complexity." },
+              ].map((lesson, i) => (
+                <Reveal key={i} delay={i * 0.05}>
+                  <div>
+                    <div style={{ fontSize: "clamp(14px, 2vw, 16px)", fontWeight: 500, color: "#1a1a1a", marginBottom: 4 }}>{lesson.title}</div>
+                    <p style={{ fontSize: "clamp(12px, 1.6vw, 14px)", lineHeight: 1.65, color: "#5a5550", margin: 0 }}>{lesson.detail}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Agents Section */}
+        <Reveal>
+          <SectionHeading id="agentsdetail">The 5 Production Agents</SectionHeading>
+        </Reveal>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 56 }}>
+          {AGENTS.map((a, i) => (
+            <Reveal key={i} delay={i * 0.06}>
+              <ExpandableCard item={a} defaultOpen={a.defaultOpen || false} />
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Integrations Map */}
+        <Reveal>
+          <SectionHeading id="integrations">Integration Ecosystem (20+)</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 56 }}>
+            {INTEGRATIONS.map((int, i) => {
+              const c = INTEGRATION_COLORS[int.category];
+              return (
+                <span key={i} style={{
+                  fontSize: 13, fontFamily: sf, fontWeight: 500,
+                  padding: "7px 16px", borderRadius: 20,
+                  background: c.bg, color: c.color,
+                  border: `1px solid ${c.color}22`,
+                  letterSpacing: "0.2px",
+                }}>
+                  {int.name}
+                </span>
+              );
+            })}
+          </div>
+        </Reveal>
+
+        {/* Why ElevenLabs */}
+        <Reveal>
+          <SectionHeading id="why">Why ElevenLabs</SectionHeading>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div style={{ padding: "32px", background: "#FEFDFB", border: "1px solid #ece9e3", borderRadius: 8, marginBottom: 56 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <p style={{ fontSize: "clamp(14px, 2vw, 16px)", lineHeight: 1.8, color: "#3d3832", margin: 0 }}>
+                I'm already a customer. I've built a Voice Agent API on your platform handling real guest calls across 68 properties. I've lived the integration journey. I know what works, what breaks, and what you're missing from a builder's perspective.
+              </p>
+              <p style={{ fontSize: "clamp(14px, 2vw, 16px)", lineHeight: 1.8, color: "#3d3832", margin: 0 }}>
+                The Automations Engineer role is about building the tools that make ElevenLabs' internal teams faster. That's literally what I've done for myself — identified operational bottlenecks, designed the automation, built it, iterated based on real usage. I know how to make teams faster.
+              </p>
+              <p style={{ fontSize: "clamp(14px, 2vw, 16px)", lineHeight: 1.8, color: "#3d3832", margin: 0 }}>
+                I operate like ElevenLabs operates — high-velocity, lean, minimal bureaucracy. I built this entire internal tools stack mostly solo. I move fast. I ship. I iterate based on real feedback. I understand the startup culture.
+              </p>
+              <p style={{ fontSize: "clamp(14px, 2vw, 16px)", lineHeight: 1.8, color: "#3d3832", margin: 0 }}>
+                And I've learned from seven years of founding and operating businesses. I understand what GTM, ops, and finance teams actually need. Not feature-driven, but outcome-driven. Not shiny, but reliable. This is what you need in an Automations Engineer.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+
+      {/* Footer */}
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 24px 80px" }}>
+        <Reveal>
+          <div style={{ textAlign: "center", padding: "40px 0 0", borderTop: "1px solid #e8e5e0" }}>
+            <p style={{ fontSize: 14, color: "#9b9389", fontStyle: "italic", margin: "0 0 12px", lineHeight: 1.6 }}>
+              Built with Claude · Submitted as part of my application for Automations Engineer at ElevenLabs
+            </p>
+            <p style={{ fontSize: 12, color: "#b5ad9e", margin: 0 }}>
+              harry@keystays.co.uk
+            </p>
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Portfolio />);
+</script>
+</body>
+</html>
